@@ -1,6 +1,9 @@
 #include "EventQueue.hpp"
 #include <iostream>
 
+
+
+//struct, representing the queue
 struct Queue {
     Event* buffer;
     int capacity;
@@ -9,6 +12,7 @@ struct Queue {
     int count;
 };
 
+//function to create a new queue
 Queue* queue_create(int capacity) {
     if (capacity <= 0) {
         capacity = 1;
@@ -24,6 +28,7 @@ Queue* queue_create(int capacity) {
     return q;
 }
 
+//function  to destroy a queue
 void queue_destroy(Queue* q) {
     if (q == nullptr) {
         return;
@@ -33,6 +38,7 @@ void queue_destroy(Queue* q) {
     delete q;
 }
 
+//check if the queue is empty
 bool queue_isEmpty(const Queue* q) {
     if (q == nullptr) {
         return true;
@@ -41,6 +47,7 @@ bool queue_isEmpty(const Queue* q) {
     return q->count == 0;
 }
 
+//check if the queue is full
 bool queue_isFull(const Queue* q) {
     if (q == nullptr) {
         return false;
@@ -49,6 +56,7 @@ bool queue_isFull(const Queue* q) {
     return q->count == q->capacity;
 }
 
+//function to add an event to the queue 
 bool queue_enqueue(Queue* q, Event e){
     if (q == nullptr) {
         return false;
@@ -65,6 +73,7 @@ bool queue_enqueue(Queue* q, Event e){
     return true;
 }
 
+//function to remove an event from the queue
 bool queue_dequeue(Queue* q, Event* out) {
     if (q == nullptr || out == nullptr) {
         return false;

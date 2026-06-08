@@ -2,12 +2,67 @@
 
 ## Task 3 ADT: EventQueue (ring buffer)
 
+### 3.3 Test Eventqueue behaviours
+```cpp
+void printEvent(const Event& e) {
+    cout  << "Timestamp: " << e.timestamp
+          << ", Sensor ID: " << e.sensorId
+          << ", Type: " << eventTypeToString(e.type)
+          << ", Value: " << e.value
+          << '\n';
+}
+
+int main() {
+    Queue* q = queue_create(3);
+
+    cout << "Queue empty? " << (queue_isEmpty(q) ? "yes" : "no") << '\n';
+
+    Event e1 = createEvent(1, TEMP, 25);
+    Event e2 = createEvent(2, BUTTON, 1);
+    Event e3 = createEvent(3, MOTION, 100);
+    Event e4 = createEvent(4, TEMP, 30);
+
+    cout <<"\nEnqueue e1: " << (queue_enqueue(q, e1) ? "success" : "failed") << '\n';
+    cout <<"Enqueue e2: " << (queue_enqueue(q, e2) ? "success" : "failed") << '\n';
+    cout <<"Enqueue e3: " << (queue_enqueue(q, e3) ? "success" : "failed") << '\n';
+
+    cout << "Queue full? " << (queue_isFull(q) ? "yes" : "no") << "\n";
+
+    cout << "Enqueue e4 into full queue: " << (queue_enqueue(q, e4) ? "success" : "failed") << '\n';
+
+    Event out;
+
+    cout << "\nDequeue 1:\n";
+    if (queue_dequeue(q, &out)) {
+        printEvent(out);
+    }
+
+    cout << "\nDequeue 2:\n";
+    if (queue_dequeue(q, &out)) {
+        printEvent(out);
+    }
+
+    cout << "\nEnqueue e4 after dequeing two events: " << (queue_enqueue(q, e4) ? "success" : "failed") << '\n';
+
+    cout << "\nRemaining dequeue operations:\n";
+    while (queue_dequeue(q, &out)) {
+        printEvent(out);
+    }
+
+    cout << "\nQueue empty? " << (queue_isEmpty(q) ? "yes" : "no") << '\n';
+
+    cout << "Try dequeue from empty queue: " << (queue_dequeue(q, &out) ? "success" : "failed") << '\n';
+
+    queue_destroy(q);
+
+    return 0;
+}
+```
+
 ### 3.2 Implement queue logic
 
 ```cpp
-#include "EventQueue.hpp"
-#include <iostream>
-
+//struct, representing the queue
 struct Queue {
     Event* buffer;
     int capacity;
@@ -16,6 +71,7 @@ struct Queue {
     int count;
 };
 
+//function to create a new queue
 Queue* queue_create(int capacity) {
     if (capacity <= 0) {
         capacity = 1;
@@ -31,6 +87,7 @@ Queue* queue_create(int capacity) {
     return q;
 }
 
+//function  to destroy a queue
 void queue_destroy(Queue* q) {
     if (q == nullptr) {
         return;
@@ -40,6 +97,7 @@ void queue_destroy(Queue* q) {
     delete q;
 }
 
+//check if the queue is empty
 bool queue_isEmpty(const Queue* q) {
     if (q == nullptr) {
         return true;
@@ -48,6 +106,7 @@ bool queue_isEmpty(const Queue* q) {
     return q->count == 0;
 }
 
+//check if the queue is full
 bool queue_isFull(const Queue* q) {
     if (q == nullptr) {
         return false;
@@ -56,6 +115,7 @@ bool queue_isFull(const Queue* q) {
     return q->count == q->capacity;
 }
 
+//function to add an event to the queue 
 bool queue_enqueue(Queue* q, Event e){
     if (q == nullptr) {
         return false;
@@ -72,6 +132,7 @@ bool queue_enqueue(Queue* q, Event e){
     return true;
 }
 
+//function to remove an event from the queue
 bool queue_dequeue(Queue* q, Event* out) {
     if (q == nullptr || out == nullptr) {
         return false;

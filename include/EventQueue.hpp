@@ -1,5 +1,5 @@
 #ifndef EVENT_QUEUE_HPP
-#define EVENY_QUEUE_HPP
+#define EVENT_QUEUE_HPP
 
 #include "Event.hpp"
 
