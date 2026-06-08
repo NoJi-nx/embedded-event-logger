@@ -10,7 +10,7 @@ struct EventLog {
 
 };
 
-Eventlog* log_create(int capacity) {
+EventLog* log_create(int capacity) {
     if (capacity <= 0) {
         capacity = 1;
     }
@@ -24,7 +24,7 @@ Eventlog* log_create(int capacity) {
 
 }
 
-void* log_destroy(EventLog* log) {
+void log_destroy(EventLog* log) {
     if (log == nullptr) {
         return;
     }
@@ -46,9 +46,9 @@ void log_append(EventLog* log, Event e) {
         return;
     }
 
-    if (log-<size == log->capacity) {
+    if (log->size == log->capacity) {
         int newCapacity = log->capacity * 2;
-        Event* newEvents = new Event[newCapactiy];
+        Event* newEvents = new Event[newCapacity];
 
         for (int i = 0; i < log->size; i++) {
             newEvents[i] = log->events [i];

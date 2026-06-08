@@ -7,7 +7,7 @@ using namespace std;
 
 //ADT for storing events
 //hidden struct
-struct Eventlog;
+struct EventLog;
 
 //creates new EventLog with startpoint/capacity
 EventLog* log_create(int capacity);
@@ -22,7 +22,7 @@ int log_size(const EventLog* log);
 void log_append(EventLog* log, Event e);
 
 //gets events at index
-Event log_get(const Eventlog* log, int index);
+Event log_get(const EventLog* log, int index);
 
 
 //replaces event at index
