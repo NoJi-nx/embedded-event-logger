@@ -4,6 +4,7 @@ using namespace std;
 
 static int globalTimestamp = 0;
 
+
 Event createEvent(int sensorId, EventType type, int value) {
 
     Event e;
