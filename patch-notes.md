@@ -1,5 +1,113 @@
 # Patch Notes
 
+## Task 4 Event Loop (Producer/Consumer)
+
+### 4.1 EventLoop interface + implement producer/consumer tick
+
+EventLoop.hpp
+```cpp
+#ifndef EVENT_LOG_HPP
+#define EVENT_LOG_HPP
+
+#include "Event.hpp"
+
+using namespace std;
+
+//ADT for storing events
+//hidden struct
+struct EventLog;
+
+//creates new EventLog with startpoint/capacity
+EventLog* log_create(int capacity);
+
+//frees all memory used by Eventlog
+void log_destroy(EventLog* log);
+
+//returns number of events now being stored
+int log_size(const EventLog* log);
+
+//adds new events to the log
+void log_append(EventLog* log, Event e);
+
+//gets events at index
+Event log_get(const EventLog* log, int index);
+
+
+//replaces event at index
+void log_set(EventLog* log, int index, Event e);
+
+#endif
+```
+
+EventLoop.cpp
+```cpp
+//event producer
+Event produceEvent() {
+    static int nextSensorId = 1;
+    
+    EventType type;
+    int value;
+
+    //rotates between event types
+    if (nextSensorId % 3 == 1) {
+        type = TEMP;
+        value = 20 + nextSensorId;
+    } else if (nextSensorId % 3 == 2) {
+        type = BUTTON;
+        value = 1;
+    }
+
+    Event e = createEvent(nextSensorId, type, value);
+
+    nextSensorId++;
+
+    return e;
+}
+
+void eventLoop_tick(Queue* queue, EventLog* log) {
+    if (queue == nullptr || log == nullptr) {
+        cout << "Event loop error: queue or log is null.\n";
+        return;
+    }
+
+    //tick flow
+    Event produced = produceEvent();
+     
+    bool enqueued = queue_enqueue(queue, produced);
+
+    if (!enqueued) {
+        cout << "Queue is full. Event was dropped.\n";
+        return;
+    }
+
+    Event consumed;
+
+    bool dequeued = queue_dequeue(queue, &consumed);
+
+    if (dequeued) {
+        log_append(log, consumed);
+        cout << "Processed event: "
+             << "Timestamp: " << consumed.timestamp
+             << ", Sensor ID: " << consumed.sensorId
+             << ", Type: " << eventTypeToString(consumed.type)
+             << ", Value: " << consumed.value
+             << '\n';
+    }
+}
+    void eventLoop_runTicks(Queue* queue, EventLog* log, int iterations) {
+        if (iterations <= 0) {
+            cout << "Number of ticks must be greater than 0.\n";
+            return;
+        }
+
+        for (int i =0; i < iterations; i++) {
+            eventLoop_tick(queue, log);
+        }
+    }
+```
+
+
+
 ## Task 3 ADT: EventQueue (ring buffer)
 
 ### 3.3 Test Eventqueue behaviours
