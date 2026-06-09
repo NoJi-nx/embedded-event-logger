@@ -2,8 +2,59 @@
 
 ## Task 4 Event Loop (Producer/Consumer)
 
-### 4.1 EventLoop interface + implement producer/consumer tick
+### 4.3 Testing integration with queue and log
 
+```cpp
+#include <iostream>
+#include "include/Event.hpp"
+#include "include/EventQueue.hpp"
+#include "include/EventLog.hpp"
+#include "include/EventLoop.hpp"
+
+using namespace std;
+
+void printEvent(const Event& e) {
+    cout  << "Timestamp: " << e.timestamp
+          << ", Sensor ID: " << e.sensorId
+          << ", Type: " << eventTypeToString(e.type)
+          << ", Value: " << e.value
+          << '\n';
+}
+
+void printLog(const EventLog* log) {
+    int size = log_size(log);
+    if (size == 0) {
+        cout << "Log is empty.\n";
+        return;
+    }
+
+    cout << "\nEventLog contents:\n";
+
+    for (int i = 0; i < size; i++) {
+        Event e = log_get(log, i);
+        printEvent(e);
+    }
+}
+
+int main() {
+    Queue* queue = queue_create(5);
+    EventLog* log = log_create(2);
+
+    cout << "Running 5 event loop ticks...\n\n";
+
+    eventLoop_runTicks(queue, log, 5);
+
+    printLog(log);
+
+    queue_destroy(queue);
+    log_destroy(log);
+
+    return 0;
+    
+}
+```
+
+### 4.2 EventLoop interface + implement producer/consumer tick
 EventLoop.hpp
 ```cpp
 #ifndef EVENT_LOG_HPP
