@@ -1,5 +1,7 @@
 #include "Sort.hpp"
+#include <iostream>
 
+using namespace std;
 
 //function to sort events by timestamp using insertion sort
 void insertionSortByTimestamp(EventLog* log) {

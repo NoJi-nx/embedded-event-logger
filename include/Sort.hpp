@@ -1,5 +1,5 @@
-#ifndef EVENT_SORT_HPP
-#define EVENT_SORT_HPP
+#ifndef SORT_HPP
+#define SORT_HPP
 
 #include "EventLog.hpp"
 

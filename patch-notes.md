@@ -1,9 +1,135 @@
 # Patch Notes
 
+## Task 6 Searching (linear)
+
+### 6.1 Search interface + implement seatch by sensor ID
+
+Sort.hpp
+```cpp
+#ifndef SEARCH_HPP
+#define SEARCH_HPP
+
+#include "EventLog.hpp"
+
+//searching the log linear for events with sensorId
+int findEventsBySensorId(const EventLog* log, int sensorId);
+
+#endif
+```
+
+Search.cpp
+```cpp
+#include "Search.hpp"
+#include "Event.hpp"
+#include <iostream>
+
+using namespace std;
+
+
+//function to print found events
+static void printFoundEvent(const Event&& e) {
+    cout << "Timestamp: " << e.timestamp
+         << ", Sensor ID: " << e.sensorId
+         << ", Type: " << eventTypeToString(e.type)
+         << ", Value: " << e.value
+         << '\n';
+
+}
+
+//function to find events by given sensor Id
+int findEventsBySensorId(const EventLog* log, int sensorId) {
+    if (log == nullptr) {
+        cout << "Search error: log is null.\n";
+        return 0;
+    }
+
+    int size = log_size(log);
+    int matches = 0;
+
+    for (int i = 0; i < size; i++) {
+        Event e = log_get(log, i);
+
+        if (e.sensorId == sensorId) {
+            printFoundEvent(e);
+            matches++;
+        }
+    }
+
+    if (matches == 0) {
+        cout << "No events found for sensor ID " << sensorId << ".\n";
+    }
+
+    return matches;
+}
+```
+
 ## Task 5 Sorting (1 algorithm)
 
 ### 5.2 Testing timestamp sorting 
 
+main.cpp
+```cpp
+void printEvent(const Event& e) {
+    cout  << "Timestamp: " << e.timestamp
+          << ", Sensor ID: " << e.sensorId
+          << ", Type: " << eventTypeToString(e.type)
+          << ", Value: " << e.value
+          << '\n';
+}
+
+void printLog(const EventLog* log) {
+    int size = log_size(log);
+
+    if (size == 0) {
+        cout << "Log is empty.\n";
+        return;
+    }
+
+    cout << "\nEventLog contents:\n";
+
+    for (int i = 0; i < size; i++) {
+        Event e = log_get(log, i);
+        printEvent(e);
+    }
+}
+
+int main() {
+    //Queue* queue = queue_create(5);
+    EventLog* log = log_create(2);
+
+    Event e1{5, 1, TEMP, 25};
+    Event e2{2, 2, BUTTON, 1};
+    Event e3{8, 3, MOTION, 100};
+    Event e4{1, 4, TEMP, 30};
+
+    log_append(log, e1);
+    log_append(log, e2);
+    log_append(log, e3);
+    log_append(log, e4);
+
+    cout <<"Before sorting:\n";
+    printLog(log);
+
+    cout << "\nIs sorted? "
+         << (isSortedByTimestamp(log) ? "yes" : "no")
+         << '\n';
+     
+    insertionSortByTimestamp(log); 
+
+    cout << "\nAfter sorting:\n";
+    printLog(log);
+
+    cout << "\nIs sorted? "
+         << (isSortedByTimestamp(log) ? "yes" : "no")
+         << '\n';
+
+    log_destroy(log);
+
+    return 0;
+    
+}
+
+```
 
 #### Output
 

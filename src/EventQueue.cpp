@@ -1,7 +1,7 @@
 #include "EventQueue.hpp"
 #include <iostream>
 
-
+using namespace std;
 
 //struct, representing the queue
 struct Queue {
