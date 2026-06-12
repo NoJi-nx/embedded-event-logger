@@ -1,5 +1,7 @@
-#include "EventSort.hpp"
+#include "Sort.hpp"
 
+
+//function to sort events by timestamp using insertion sort
 void insertionSortByTimestamp(EventLog* log) {
     if (log == nullptr) {
         return;
@@ -28,6 +30,7 @@ for (int i = 1; i < size; i++) {
 
 }
 
+//bool that checks if the events in the log are sorted by timestamp
 bool isSortedByTimestamp(const EventLog* log){
     if (log == nullptr) {
         return true;
@@ -40,7 +43,7 @@ bool isSortedByTimestamp(const EventLog* log){
     }
 
     for (int i = 0; i < size - 1; i++) {
-        Event current = log_gett(log, i);
+        Event current = log_get(log, i);
         Event next = log_get(log, i + 1);
 
         if (current.timestamp > next.timestamp) {

@@ -3,6 +3,7 @@
 #include "include/EventQueue.hpp"
 #include "include/EventLog.hpp"
 #include "include/EventLoop.hpp"
+#include "include/Sort.hpp"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ void printEvent(const Event& e) {
 
 void printLog(const EventLog* log) {
     int size = log_size(log);
+
     if (size == 0) {
         cout << "Log is empty.\n";
         return;
@@ -30,16 +32,35 @@ void printLog(const EventLog* log) {
 }
 
 int main() {
-    Queue* queue = queue_create(5);
+    //Queue* queue = queue_create(5);
     EventLog* log = log_create(2);
 
-    cout << "Running 5 event loop ticks...\n\n";
+    Event e1{5, 1, TEMP, 25};
+    Event e2{2, 2, BUTTON, 1};
+    Event e3{8, 3, MOTION, 100};
+    Event e4{1, 4, TEMP, 30};
 
-    eventLoop_runTicks(queue, log, 5);
+    log_append(log, e1);
+    log_append(log, e2);
+    log_append(log, e3);
+    log_append(log, e4);
 
+    cout <<"Before sorting:\n";
     printLog(log);
 
-    queue_destroy(queue);
+    cout << "\nIs sorted? "
+         << (isSortedByTimestamp(log) ? "yes" : "no")
+         << '\n';
+     
+    insertionSortByTimestamp(log); 
+
+    cout << "\nAfter sorting:\n";
+    printLog(log);
+
+    cout << "\nIs sorted? "
+         << (isSortedByTimestamp(log) ? "yes" : "no")
+         << '\n';
+
     log_destroy(log);
 
     return 0;

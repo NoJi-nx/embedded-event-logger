@@ -2,6 +2,34 @@
 
 ## Task 5 Sorting (1 algorithm)
 
+### 5.2 Testing timestamp sorting 
+
+
+#### Output
+
+```
+Before sorting
+
+EventLog contents:
+Timestamp: 5, Sensor ID: 1, Type: TEMP, Value: 25
+Timestamp: 2, Sensor ID: 2, Type: BUTTON, Value: 1
+Timestamp: 8, Sensor ID: 3, Type: MOTION, Value: 100
+Timestamp: 1, Sensor ID: 4, Type: TEMP, Value: 30
+
+Is sorted? no
+
+After sorting:
+
+EventLog contents:
+Timestamp: 1, Sensor ID: 4, Type: TEMP, Value: 30
+Timestamp: 2, Sensor ID: 2, Type: BUTTON, Value: 1
+Timestamp: 5, Sensor ID: 1, Type: TEMP, Value: 25
+Timestamp: 8, Sensor ID: 3, Type: MOTION, Value: 100
+
+Is sorted? yes
+```
+
+
 ### 5.1 Sort interface for timestamp + implemention
 
 Sort.hpp
@@ -23,6 +51,7 @@ bool isSortedByTimestamp(const EventLog* log);
 
 Sort.cpp
 ```cpp
+//function to sort events by timestamp using insertion sort
 void insertionSortByTimestamp(EventLog* log) {
     if (log == nullptr) {
         return;
@@ -51,6 +80,7 @@ for (int i = 1; i < size; i++) {
 
 }
 
+//bool that checks if the events in the log are sorted by timestamp
 bool isSortedByTimestamp(const EventLog* log){
     if (log == nullptr) {
         return true;
@@ -63,7 +93,7 @@ bool isSortedByTimestamp(const EventLog* log){
     }
 
     for (int i = 0; i < size - 1; i++) {
-        Event current = log_gett(log, i);
+        Event current = log_get(log, i);
         Event next = log_get(log, i + 1);
 
         if (current.timestamp > next.timestamp) {
