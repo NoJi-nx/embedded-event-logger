@@ -6,7 +6,7 @@ using namespace std;
 
 
 //function to print found events
-static void printFoundEvent(const Event&& e) {
+static void printFoundEvent(const Event& e) {
     cout << "Timestamp: " << e.timestamp
          << ", Sensor ID: " << e.sensorId
          << ", Type: " << eventTypeToString(e.type)

@@ -4,6 +4,7 @@
 #include "include/EventLog.hpp"
 #include "include/EventLoop.hpp"
 #include "include/Sort.hpp"
+#include "include/Search.hpp"
 
 using namespace std;
 
@@ -35,16 +36,47 @@ int main() {
     //Queue* queue = queue_create(5);
     EventLog* log = log_create(2);
 
-    Event e1{5, 1, TEMP, 25};
-    Event e2{2, 2, BUTTON, 1};
-    Event e3{8, 3, MOTION, 100};
-    Event e4{1, 4, TEMP, 30};
+    Event e1 = createEvent(1, TEMP, 25);
+    Event e2 = createEvent(2, BUTTON, 1);
+    Event e3 = createEvent(1, TEMP, 30);
+    Event e4 = createEvent(3, MOTION, 100);
+    Event e5 = createEvent(2, TEMP, 28);
 
     log_append(log, e1);
     log_append(log, e2);
     log_append(log, e3);
     log_append(log, e4);
+    log_append(log, e5);
 
+    printLog(log);
+
+    cout << "\nSearching for sensor ID 1:\n";
+    int match1 = findEventsBySensorId(log, 1);
+    cout << "Matches found: " << match1 << "\n";
+
+    cout << "\nSearching for sensor ID 2:\n";
+    int match2 = findEventsBySensorId(log, 2);
+    cout << "Matches found: " << match2 << "\n";
+
+    cout << "\nSearching for sensor ID 3:\n";
+    int match3 = findEventsBySensorId(log, 3);
+    cout << "Matches found: " << match3 << "\n";
+
+    cout << "\nSearching for sensor ID 10:\n";
+    int match10 = findEventsBySensorId(log, 10);
+    cout << "Matches found: " << match10 << "\n";
+
+    
+    log_destroy(log);
+
+    return 0;
+
+
+    
+}
+
+
+/*
     cout <<"Before sorting:\n";
     printLog(log);
 
@@ -64,9 +96,8 @@ int main() {
     log_destroy(log);
 
     return 0;
-    
-}
 
+    */
 
 /* void printLog(const EventLog* log) {
     int size = log_size(log);

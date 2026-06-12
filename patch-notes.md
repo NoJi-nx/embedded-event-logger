@@ -2,9 +2,110 @@
 
 ## Task 6 Searching (linear)
 
+### 6.2 Test log linear search
+
+main.cpp
+```cpp
+void printEvent(const Event& e) {
+    cout  << "Timestamp: " << e.timestamp
+          << ", Sensor ID: " << e.sensorId
+          << ", Type: " << eventTypeToString(e.type)
+          << ", Value: " << e.value
+          << '\n';
+}
+
+void printLog(const EventLog* log) {
+    int size = log_size(log);
+
+    if (size == 0) {
+        cout << "Log is empty.\n";
+        return;
+    }
+
+    cout << "\nEventLog contents:\n";
+
+    for (int i = 0; i < size; i++) {
+        Event e = log_get(log, i);
+        printEvent(e);
+    }
+}
+
+int main() {
+    //Queue* queue = queue_create(5);
+    EventLog* log = log_create(2);
+
+    Event e1 = createEvent(1, TEMP, 25);
+    Event e2 = createEvent(2, BUTTON, 1);
+    Event e3 = createEvent(1, TEMP, 30);
+    Event e4 = createEvent(3, MOTION, 100);
+    Event e5 = createEvent(2, TEMP, 28);
+
+    log_append(log, e1);
+    log_append(log, e2);
+    log_append(log, e3);
+    log_append(log, e4);
+    log_append(log, e5);
+
+    printLog(log);
+
+    cout << "\nSearching for sensor ID 1:\n";
+    int match1 = findEventsBySensorId(log, 1);
+    cout << "Matches found: " << match1 << "\n";
+
+    cout << "\nSearching for sensor ID 2:\n";
+    int match2 = findEventsBySensorId(log, 2);
+    cout << "Matches found: " << match2 << "\n";
+
+    cout << "\nSearching for sensor ID 3:\n";
+    int match3 = findEventsBySensorId(log, 3);
+    cout << "Matches found: " << match3 << "\n";
+
+    cout << "\nSearching for sensor ID 10:\n";
+    int match10 = findEventsBySensorId(log, 10);
+    cout << "Matches found: " << match10 << "\n";
+
+    
+    log_destroy(log);
+
+    return 0;
+
+
+    
+}
+
+```
+
+#### Outtput
+
+```cpp
+EventLog contents:
+Timestamp: 0, Sensor ID: 1, Type: TEMP, Value: 25
+Timestamp: 1, Sensor ID: 2, Type: BUTTON, Value: 1
+Timestamp: 2, Sensor ID: 1, Type: TEMP, Value: 30
+Timestamp: 3, Sensor ID: 3, Type: MOTION, Value: 100
+Timestamp: 4, Sensor ID: 2, Type: TEMP, Value: 28
+
+Searching for sensor ID 1:
+Timestamp: 0, Sensor ID: 1, Type: TEMP, Value: 25
+Timestamp: 2, Sensor ID: 1, Type: TEMP, Value: 30
+Matches found: 2
+
+Searching for sensor ID 2:
+Timestamp: 1, Sensor ID: 2, Type: BUTTON, Value: 1
+Timestamp: 4, Sensor ID: 2, Type: TEMP, Value: 28
+Matches found: 2
+
+Searching for sensor ID 3:
+Timestamp: 3, Sensor ID: 3, Type: MOTION, Value: 100
+Matches found: 1
+
+Searching for sensor ID 10:
+No events found for sensor ID 10.
+```
+
 ### 6.1 Search interface + implement seatch by sensor ID
 
-Sort.hpp
+Search.hpp
 ```cpp
 #ifndef SEARCH_HPP
 #define SEARCH_HPP
@@ -27,7 +128,7 @@ using namespace std;
 
 
 //function to print found events
-static void printFoundEvent(const Event&& e) {
+static void printFoundEvent(const Event& e) {
     cout << "Timestamp: " << e.timestamp
          << ", Sensor ID: " << e.sensorId
          << ", Type: " << eventTypeToString(e.type)

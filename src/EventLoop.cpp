@@ -17,6 +17,9 @@ Event produceEvent() {
     } else if (nextSensorId % 3 == 2) {
         type = BUTTON;
         value = 1;
+    } else {
+        type = MOTION;
+        value = 100;
     }
 
     Event e = createEvent(nextSensorId, type, value);
