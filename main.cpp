@@ -65,9 +65,27 @@ int main() {
     cout << "\nSearching for sensor ID 10:\n";
     int match10 = findEventsBySensorId(log, 10);
     cout << "Matches found: " << match10 << "\n";
-
-    
     log_destroy(log);
+    
+    
+    //empty log test - Search task
+    EventLog* emptyLog = log_create(2);
+
+    cout << "\nSearching empty log:\n";
+    int emptyMatch = findEventsBySensorId(emptyLog, 1);
+    cout << "Matches found: " << emptyMatch << "\n";
+    log_destroy(emptyLog);
+
+
+    //one-element log - Search task
+    EventLog* oneLog = log_create(2);
+
+    log_append(oneLog, createEvent(7, TEMP, 22));
+
+    cout << "\nSearching one-element log for sensor ID 7:\n";
+    int oneMatch = findEventsBySensorId(oneLog, 7);
+    cout << "Matches found: " << oneMatch << "\n";
+    log_destroy(oneLog);
 
     return 0;
 

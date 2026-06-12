@@ -2,6 +2,29 @@
 
 ## Task 6 Searching (linear)
 
+### 6.3 Test edge cases for search
+
+```cpp
+//empty log test - Search task
+    EventLog* emptyLog = log_create(2);
+
+    cout << "\nSearching empty log:\n";
+    int emptyMatch = findEventsBySensorId(emptyLog, 1);
+    cout << "Matches found: " << emptyMatch << "\n";
+    log_destroy(emptyLog);
+
+
+    //one-element log - Search task
+    EventLog* oneLog = log_create(2);
+
+    log_append(oneLog, createEvent(7, TEMP, 22));
+
+    cout << "\nSearching one-element log for sensor ID 7:\n";
+    int oneMatch = findEventsBySensorId(oneLog, 7);
+    cout << "Matches found: " << oneMatch << "\n";
+    log_destroy(oneLog);
+```
+
 ### 6.2 Test log linear search
 
 main.cpp
@@ -32,6 +55,7 @@ void printLog(const EventLog* log) {
 
 int main() {
     //Queue* queue = queue_create(5);
+    
     EventLog* log = log_create(2);
 
     Event e1 = createEvent(1, TEMP, 25);
@@ -66,6 +90,8 @@ int main() {
 
     
     log_destroy(log);
+
+
 
     return 0;
 
