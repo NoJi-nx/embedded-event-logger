@@ -2,8 +2,27 @@
 
 ## Task 8 Design Pattern: Strategy-light sort
 
+### 8.3 Update printHelp in Menu.cpp
+
+Menu.cpp
+```cpp
+// function that shows command menu
+static void printHelp() {
+    cout << "\nAvailable commands: \n";
+    cout << " tick [n]               Run n event loop ticks. Default is 1.\n";
+    cout << " print                  Print all events in the log.\n";
+    cout << " sort [strategy]        Sort log by timestamp. Default: insertion.\n";
+    cout << "                        Available: insertion.\n";    
+    cout << " find <id>              Find events by sensor ID.\n";
+    cout << " help                   Show help message.\n";
+    cout << " exit                   Exit the program.\n\n";
+}
+
+```
+
 ### 8.2 Update Meny.cpp sort command
 
+Menu.cpp
 ```cpp
  else if (command == "sort") {
            string strategyName;

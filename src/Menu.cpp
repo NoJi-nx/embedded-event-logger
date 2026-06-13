@@ -37,15 +37,16 @@ void printLog(const EventLog* log) {
     }
 }
 
-// function that shows help message
+// function that shows command menu
 static void printHelp() {
     cout << "\nAvailable commands: \n";
-    cout << " tick [n]     Run n event loop ticks. Default is 1.\n";
-    cout << " print        Print all events in the log.\n";
-    cout << " sort         Sort log by timestamp.\n";
-    cout << " find <id>    Find events by sensor ID.\n";
-    cout << " help         Show help message.\n";
-    cout << " exit         Exit the program.\n\n";
+    cout << " tick [n]               Run n event loop ticks. Default is 1.\n";
+    cout << " print                  Print all events in the log.\n";
+    cout << " sort [strategy]        Sort log by timestamp. Default: insertion.\n";
+    cout << "                        Available: insertion.\n";    
+    cout << " find <id>              Find events by sensor ID.\n";
+    cout << " help                   Show help message.\n";
+    cout << " exit                   Exit the program.\n\n";
 }
 
 
