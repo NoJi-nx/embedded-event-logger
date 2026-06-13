@@ -4,14 +4,15 @@
 #include "EventLog.hpp"
 #include <string>
 
-//function pointer type for sorting strategies
 using namespace std;
 
-//return a sorting function based on the strategy name
+//function pointer type for sorting strategies
 using SortFn = void (*)(EventLog* log);
 
-//runs selected sorting strategy
+//return a sorting function based on the strategy name
 SortFn getSortStrategy(const string& strategyName);
 
+//runs selected sorting strategy
+bool sortLogWithStrategy(EventLog* log, const string& strategyName);
 
 #endif

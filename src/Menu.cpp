@@ -3,6 +3,7 @@
 #include "EventLoop.hpp"
 #include "Sort.hpp"
 #include "Search.hpp"
+#include "SortStrategy.hpp"
 
 #include <iostream>
 #include <sstream>
