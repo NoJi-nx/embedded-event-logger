@@ -1,5 +1,64 @@
 # Patch Notes
 
+## Task 8 Design Pattern: Strategy-light sort
+
+### 8.1 Sort strategy interface + implementattion
+
+SortStrategy.hpp
+```cpp
+#ifndef SORT_STRATEGY_HPP
+#define SORT_STRATEGY_HPP
+
+#include "EventLog.hpp"
+#include <string>
+
+//function pointer type for sorting strategies
+using namespace std;
+
+//return a sorting function based on the strategy name
+using SortFn = void (*)(EventLog* log);
+
+//runs selected sorting strategy
+SortFn getSortStrategy(const string& strategyName);
+
+
+#endif
+```
+
+SortStrategy.cpp
+```cpp
+#include "SortStrategy.hpp"
+#include "Sort.hpp"
+
+using namespace std;
+
+
+//returns a sorting function based on the strategy name
+SortFn getSortStrategy(const string& strategyName) {
+    if (strategyName == "insertion" || strategyName.empty()) {
+        return insertionSortByTimestamp;
+    }
+    return nullptr;
+}
+
+
+//sorts an event log using the specified sorting strategy
+bool sortLogWithStrategy(EventLog* log, const string& strategyName) {
+    if (log == nullptr) {
+        return false;
+    }
+
+    SortFn sorter = getSortStrategy(strategyName);
+
+    if (sorter == nullptr) {
+        return false;
+    }
+
+    sorter(log);
+    return true;
+}
+```
+
 ## Task 7 Command Menu (terminal)
 
 ### 7.2 Connect command menu to main program
