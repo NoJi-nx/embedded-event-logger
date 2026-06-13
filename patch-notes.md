@@ -2,6 +2,72 @@
 
 ## Task 7 Command Menu (terminal)
 
+### 7.2 Connect command menu to main program
+
+main.cpp
+```cpp
+//main function 
+int main() {
+    Queue* queue = queue_create(10);
+    EventLog* log = log_create(10);
+
+    runCommandMenu(queue, log);
+
+    queue_destroy(queue);
+    log_destroy(log);
+
+    return 0;
+
+}
+```
+
+#### Output
+
+```
+Event logger
+Type 'help' to see available commands.
+
+> help
+
+Available commands: 
+ tick [n]     Run n event loop ticks. Default is 1.
+ print        Print all events in the log.
+ sort         Sort log by timestamp.
+ find <id>    Find events by sensor ID.
+ help         Show help message.
+ exit         Exit the program.
+
+
+> print
+Log is empty.
+
+> tick 5
+Processed event: Timestamp: 0, Sensor ID: 1, Type: TEMP, Value: 21
+Processed event: Timestamp: 1, Sensor ID: 2, Type: BUTTON, Value: 1
+Processed event: Timestamp: 2, Sensor ID: 3, Type: MOTION, Value: 100
+Processed event: Timestamp: 3, Sensor ID: 4, Type: TEMP, Value: 24
+Processed event: Timestamp: 4, Sensor ID: 5, Type: BUTTON, Value: 1
+
+> print
+
+EventLog contents:
+Timestamp: 0, Sensor ID: 1, Type: TEMP, Value: 21
+Timestamp: 1, Sensor ID: 2, Type: BUTTON, Value: 1
+Timestamp: 2, Sensor ID: 3, Type: MOTION, Value: 100
+Timestamp: 3, Sensor ID: 4, Type: TEMP, Value: 24
+Timestamp: 4, Sensor ID: 5, Type: BUTTON, Value: 1
+
+> find 2
+Timestamp: 1, Sensor ID: 2, Type: BUTTON, Value: 1
+Matches found: 1
+
+> sort
+Log sorted by timestamp.
+Sort check: log is sorted.
+
+> exit
+```
+
 ### 7.1 Menu interface + terminal command menu implementation
 
 Menu.hpp
