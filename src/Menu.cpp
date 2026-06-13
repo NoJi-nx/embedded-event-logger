@@ -86,16 +86,29 @@ void runCommandMenu(Queue* queue, EventLog* log) {
         }
 
         else if (command == "sort") {
-            insertionSortByTimestamp(log);
+           string strategyName;
 
-            cout << "Log sorted by timestamp.\n";
+           if (!(ss >> strategyName)) {
+            strategyName = "insertion";
+           }
 
-            if (isSortedByTimestamp(log)) {
-                cout << "Sort check: log is sorted.\n";
-            } else {
-                cout << "Sort check: log is NOT sorted.\n";
-            }
+           bool success = sortLogWithStrategy(log, strategyName);
+
+           if (!success) {
+            cout << "Unknown sorting strategy: " << strategyName << '\n';
+            cout << "Available strategies: insertion\n";
+            continue;
+           }
+
+           cout << "Log sorted by timestamp using " << strategyName << " sort.\n";
+
+           if (isSortedByTimestamp(log)) {
+            cout << "Sort check: log is sorted.\n";
+           } else {
+            cout << "Sort check: log is not sorted. \n";
+           }
         }
+        
 
         else if (command == "find") {
             int sensorId;

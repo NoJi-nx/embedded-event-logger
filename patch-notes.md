@@ -2,6 +2,35 @@
 
 ## Task 8 Design Pattern: Strategy-light sort
 
+### 8.2 Update Meny.cpp sort command
+
+```cpp
+ else if (command == "sort") {
+           string strategyName;
+
+           if (!(ss >> strategyName)) {
+            strategyName = "insertion";
+           }
+
+           bool success = sortLogWithStrategy(log, strategyName);
+
+           if (!success) {
+            cout << "Unknown sorting strategy: " << strategyName << '\n';
+            cout << "Available strategies: insertion\n";
+            continue;
+           }
+
+           cout << "Log sorted by timestamp using " << strategyName << " sort.\n";
+
+           if (isSortedByTimestamp(log)) {
+            cout << "Sort check: log is sorted.\n";
+           } else {
+            cout << "Sort check: log is not sorted. \n";
+           }
+        }
+        
+```
+
 ### 8.1 Sort strategy interface + implementattion
 
 SortStrategy.hpp
