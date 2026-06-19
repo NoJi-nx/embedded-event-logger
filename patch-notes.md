@@ -2,9 +2,127 @@
 
 ## Part 2
 
-## Module 1: AlarmSet
+## Module C:
 
-### 2.1.3 Update loop file to track temperature alarms + add alarm and threshold commands
+## Module A: AlarmSet
+
+### A-1.4 Test integration on main
+
+```cpp
+#include <iostream>
+#include "include/EventQueue.hpp"
+#include "include/EventLog.hpp"
+#include "include/Menu.hpp"
+#include "include/AlarmSet.hpp"
+
+using namespace std;
+
+
+//main function 
+int main() {
+    Queue* queue = queue_create(10);
+    EventLog* log = log_create(10);
+    AlarmSet* alarms = alarm_create(20, 30);
+
+    runCommandMenu(queue, log, alarms);
+
+    alarm_destroy(alarms);
+    queue_destroy(queue);
+    log_destroy(log);
+
+    return 0;
+
+}
+```
+
+Terminal
+```
+Event logger
+Type 'help' to see available commands.
+
+> help
+
+Available commands: 
+ tick [n]               Run n event loop ticks. Default is 1.
+ print                  Print all events in the log.
+ sort [strategy]        Sort log by timestamp. Default: insertion.
+                        Available: insertion.
+ find <id>              Find events by sensor ID.
+ alarms                 Show active temperature alarms.
+ set-threshold <value>  Set temperature alarm threshold.
+ help                   Show help message.
+ exit                   Exit the program.
+
+
+> alarm
+Unknown command: alarm
+Type 'help' to see available commands.
+
+> alarms
+Temperature threshold: 30
+No active alarms.
+
+> set-threshold 22
+Temperature threshold set to 22.
+
+> tick 10
+Processed event: Timestamp: 0, Sensor ID: 1, Type: TEMP, Value: 21
+Processed event: Timestamp: 1, Sensor ID: 2, Type: BUTTON, Value: 1
+Processed event: Timestamp: 2, Sensor ID: 3, Type: MOTION, Value: 100
+ALARM ON_ sensor 4 temperature 24 > threshold 22
+Processed event: Timestamp: 3, Sensor ID: 4, Type: TEMP, Value: 24
+Processed event: Timestamp: 4, Sensor ID: 5, Type: BUTTON, Value: 1
+Processed event: Timestamp: 5, Sensor ID: 6, Type: MOTION, Value: 100
+ALARM ON_ sensor 7 temperature 27 > threshold 22
+Processed event: Timestamp: 6, Sensor ID: 7, Type: TEMP, Value: 27
+Processed event: Timestamp: 7, Sensor ID: 8, Type: BUTTON, Value: 1
+Processed event: Timestamp: 8, Sensor ID: 9, Type: MOTION, Value: 100
+ALARM ON_ sensor 10 temperature 30 > threshold 22
+Processed event: Timestamp: 9, Sensor ID: 10, Type: TEMP, Value: 30
+
+> alarms
+Temperature threshold: 22
+Active alarms:
+Sensor ID: 4
+Sensor ID: 7
+Sensor ID: 10
+
+> print
+
+EventLog contents:
+Timestamp: 0, Sensor ID: 1, Type: TEMP, Value: 21
+Timestamp: 1, Sensor ID: 2, Type: BUTTON, Value: 1
+Timestamp: 2, Sensor ID: 3, Type: MOTION, Value: 100
+Timestamp: 3, Sensor ID: 4, Type: TEMP, Value: 24
+Timestamp: 4, Sensor ID: 5, Type: BUTTON, Value: 1
+Timestamp: 5, Sensor ID: 6, Type: MOTION, Value: 100
+Timestamp: 6, Sensor ID: 7, Type: TEMP, Value: 27
+Timestamp: 7, Sensor ID: 8, Type: BUTTON, Value: 1
+Timestamp: 8, Sensor ID: 9, Type: MOTION, Value: 100
+Timestamp: 9, Sensor ID: 10, Type: TEMP, Value: 30
+
+> set-threshold 35
+Temperature threshold set to 35.
+
+> tick 5
+Processed event: Timestamp: 10, Sensor ID: 11, Type: BUTTON, Value: 1
+Processed event: Timestamp: 11, Sensor ID: 12, Type: MOTION, Value: 100
+Processed event: Timestamp: 12, Sensor ID: 13, Type: TEMP, Value: 33
+Processed event: Timestamp: 13, Sensor ID: 14, Type: BUTTON, Value: 1
+Processed event: Timestamp: 14, Sensor ID: 15, Type: MOTION, Value: 100
+
+> alarms
+Temperature threshold: 35
+Active alarms:
+Sensor ID: 4
+Sensor ID: 7
+Sensor ID: 10
+
+> exit
+
+```
+
+### A-1.3 Update loop file to track temperature alarms + add alarm and threshold commands
 
 EventLoop.hpp
 ```cpp
@@ -191,7 +309,7 @@ static void printHelp() {
 
 
 
-### 2.1.2 Implement AlarmSet for temperature threshold alarms
+### A-1.2 Implement AlarmSet for temperature threshold alarms
 
 Alarmset.cpp
 ```cpp
@@ -363,7 +481,7 @@ void alarm_print(const AlarmSet* alarms) {
 }
 ```
 
-### 2.1.1 Add AlarmSet ADT interface
+### A-1.1 Add AlarmSet ADT interface
 
 AlarmSet.hpp
 ```cpp
