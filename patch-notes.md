@@ -4,6 +4,193 @@
 
 ## Module 1: AlarmSet
 
+### 2.1.3 Update loop file to track temperature alarms + add alarm and threshold commands
+
+EventLoop.hpp
+```cpp
+#ifndef EVENT_LOOP_HPP
+#define EVENT_LOOP_HPP
+
+#include "EventLog.hpp"
+#include "EventQueue.hpp"
+#include "AlarmSet.hpp"
+
+//creating a simulated event
+Event produceEvent();
+
+
+/* runs all these events: 
+1 produce event
+2. enqueue event
+3. dequeue event
+4. append event to log
+5. update alarms
+*/
+void eventLoop_tick(Queue* queue, EventLog* log, AlarmSet* alarms);
+
+//runs multple event loop 
+void eventLoop_runTicks(Queue* queue, EventLog* log, AlarmSet* alarms, int iterations);
+
+#endif
+```
+
+
+EventLoop.cpp
+```cpp
+#include "EventLoop.hpp"
+#include <iostream>
+
+using namespace std;
+
+//event producer
+Event produceEvent() {
+    static int nextSensorId = 1;
+    
+    EventType type;
+    int value;
+
+    //rotates between event types
+    if (nextSensorId % 3 == 1) {
+        type = TEMP;
+        value = 20 + nextSensorId;
+    } else if (nextSensorId % 3 == 2) {
+        type = BUTTON;
+        value = 1;
+    } else {
+        type = MOTION;
+        value = 100;
+    }
+
+    Event e = createEvent(nextSensorId, type, value);
+
+    nextSensorId++;
+
+    return e;
+}
+
+void eventLoop_tick(Queue* queue, EventLog* log, AlarmSet* alarms) {
+    if (queue == nullptr || log == nullptr) {
+        cout << "Event loop error: queue or log is null.\n";
+        return;
+    }
+
+    //tick flow
+    Event produced = produceEvent();
+     
+    bool enqueued = queue_enqueue(queue, produced);
+
+    if (!enqueued) {
+        cout << "Queue is full. Event was dropped.\n";
+        return;
+    }
+
+    Event consumed;
+
+    bool dequeued = queue_dequeue(queue, &consumed);
+
+    if (dequeued) {
+        log_append(log, consumed);
+        alarm_updateFromEvent(alarms, consumed);
+
+        cout << "Processed event: "
+             << "Timestamp: " << consumed.timestamp
+             << ", Sensor ID: " << consumed.sensorId
+             << ", Type: " << eventTypeToString(consumed.type)
+             << ", Value: " << consumed.value
+             << '\n';
+    }
+}
+    void eventLoop_runTicks(Queue* queue, EventLog* log, AlarmSet* alarms, int iterations) {
+        if (iterations <= 0) {
+            cout << "Number of ticks must be greater than 0.\n";
+            return;
+        }
+
+        for (int i =0; i < iterations; i++) {
+            eventLoop_tick(queue, log, alarms);
+        }
+    }
+```
+
+Menu.hpp
+```cpp
+#ifndef MENU_HPP
+#define MENU_HPP
+
+#include "EventLog.hpp"
+#include "EventQueue.hpp"
+#include "AlarmSet.hpp"
+
+//starting the terminal command menu
+void runCommandMenu(Queue* queue, EventLog* log, AlarmSet* alarms);
+
+
+#endif
+```
+
+Menu.cpp
+```cpp
+//run the command menu
+void runCommandMenu(Queue* queue, EventLog* log, AlarmSet* alarms) {
+    if (queue == nullptr || log == nullptr || alarms == nullptr) {
+        cout << "Command menu error: queue, log or alarms is null.\n";
+        return;
+    }
+```
+
+```cpp
+//tick command
+        if (command == "tick") {
+            int iterations = 1;
+
+            if (ss >> iterations) {
+                eventLoop_runTicks(queue, log, alarms, iterations);
+
+            } else {
+                eventLoop_runTicks(queue, log, alarms, 1);
+            }
+        }
+```
+
+```cpp
+else if (command == "alarms") {
+            alarm_print(alarms);
+        }
+
+        else if (command == "set-threshold") {
+            int threshold;
+
+            if (ss >> threshold) {
+                alarm_setThreshold(alarms, threshold);
+                cout << "Temperature threshold set to " 
+                     << alarm_getThreshold(alarms) << ".\n";
+            } else {
+                cout << "Usage: set-threshold <value>\n";
+            }
+        }
+
+```
+
+
+```cpp
+// function that shows command menu
+static void printHelp() {
+    cout << "\nAvailable commands: \n";
+    cout << " tick [n]               Run n event loop ticks. Default is 1.\n";
+    cout << " print                  Print all events in the log.\n";
+    cout << " sort [strategy]        Sort log by timestamp. Default: insertion.\n";
+    cout << "                        Available: insertion.\n";    
+    cout << " find <id>              Find events by sensor ID.\n";
+    cout << " alarms                 Show active temperature alarms.\n";
+    cout << " set-threshold <value>  Set temperature alarm threshold.\n";
+    cout << " help                   Show help message.\n";
+    cout << " exit                   Exit the program.\n\n";
+}
+
+```
+
+
+
 ### 2.1.2 Implement AlarmSet for temperature threshold alarms
 
 Alarmset.cpp
@@ -208,7 +395,7 @@ bool alarm_contains(const AlarmSet* alarms, int sensorId);
 bool alarm_add(AlarmSet* alarms, int sensorID);
 
 //removes sensorId from alarm set if active
-void alarm_remove(AlarmSet* alarms, int sensorId);
+bool alarm_remove(AlarmSet* alarms, int sensorId);
 
 //updates alarm set based on event
 void alarm_updateFromEvent(AlarmSet* alarms, const Event& e);

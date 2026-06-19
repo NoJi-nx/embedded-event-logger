@@ -29,7 +29,7 @@ Event produceEvent() {
     return e;
 }
 
-void eventLoop_tick(Queue* queue, EventLog* log) {
+void eventLoop_tick(Queue* queue, EventLog* log, AlarmSet* alarms) {
     if (queue == nullptr || log == nullptr) {
         cout << "Event loop error: queue or log is null.\n";
         return;
@@ -51,6 +51,8 @@ void eventLoop_tick(Queue* queue, EventLog* log) {
 
     if (dequeued) {
         log_append(log, consumed);
+        alarm_updateFromEvent(alarms, consumed);
+
         cout << "Processed event: "
              << "Timestamp: " << consumed.timestamp
              << ", Sensor ID: " << consumed.sensorId
@@ -59,13 +61,13 @@ void eventLoop_tick(Queue* queue, EventLog* log) {
              << '\n';
     }
 }
-    void eventLoop_runTicks(Queue* queue, EventLog* log, int iterations) {
+    void eventLoop_runTicks(Queue* queue, EventLog* log, AlarmSet* alarms, int iterations) {
         if (iterations <= 0) {
             cout << "Number of ticks must be greater than 0.\n";
             return;
         }
 
         for (int i =0; i < iterations; i++) {
-            eventLoop_tick(queue, log);
+            eventLoop_tick(queue, log, alarms);
         }
     }

@@ -45,6 +45,8 @@ static void printHelp() {
     cout << " sort [strategy]        Sort log by timestamp. Default: insertion.\n";
     cout << "                        Available: insertion.\n";    
     cout << " find <id>              Find events by sensor ID.\n";
+    cout << " alarms                 Show active temperature alarms.\n";
+    cout << " set-threshold <value>  Set temperature alarm threshold.\n";
     cout << " help                   Show help message.\n";
     cout << " exit                   Exit the program.\n\n";
 }
@@ -52,9 +54,9 @@ static void printHelp() {
 
 
 //run the command menu
-void runCommandMenu(Queue* queue, EventLog* log) {
-    if (queue == nullptr || log == nullptr) {
-        cout << "Command menu error: queue or log is null.\n";
+void runCommandMenu(Queue* queue, EventLog* log, AlarmSet* alarms) {
+    if (queue == nullptr || log == nullptr || alarms == nullptr) {
+        cout << "Command menu error: queue, log or alarms is null.\n";
         return;
     }
 
@@ -72,14 +74,15 @@ void runCommandMenu(Queue* queue, EventLog* log) {
         string command;
         ss >> command;
 
+        //tick command
         if (command == "tick") {
             int iterations = 1;
 
             if (ss >> iterations) {
-                eventLoop_runTicks(queue, log, iterations);
+                eventLoop_runTicks(queue, log, alarms, iterations);
 
             } else {
-                eventLoop_runTicks(queue, log, 1);
+                eventLoop_runTicks(queue, log, alarms, 1);
             }
         }
 
@@ -122,6 +125,22 @@ void runCommandMenu(Queue* queue, EventLog* log) {
                 cout << "Usage: find <sensorId>\n";
             }
         } 
+
+        else if (command == "alarms") {
+            alarm_print(alarms);
+        }
+
+        else if (command == "set-threshold") {
+            int threshold;
+
+            if (ss >> threshold) {
+                alarm_setThreshold(alarms, threshold);
+                cout << "Temperature threshold set to " 
+                     << alarm_getThreshold(alarms) << ".\n";
+            } else {
+                cout << "Usage: set-threshold <value>\n";
+            }
+        }
 
         else if (command == "help") {
             printHelp();
