@@ -26,7 +26,7 @@ bool alarm_contains(const AlarmSet* alarms, int sensorId);
 bool alarm_add(AlarmSet* alarms, int sensorID);
 
 //removes sensorId from alarm set if active
-void alarm_remove(AlarmSet* alarms, int sensorId);
+bool alarm_remove(AlarmSet* alarms, int sensorId);
 
 //updates alarm set based on event
 void alarm_updateFromEvent(AlarmSet* alarms, const Event& e);
