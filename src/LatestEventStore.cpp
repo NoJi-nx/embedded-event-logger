@@ -84,7 +84,7 @@ void latest_print(const LatestEventStore* store, int sensorId) {
     Event e;
 
     if(!latest_get(store, sensorId, &e)) {
-        cout << "No latestt event found for sensor ID "
+        cout << "No latest event found for sensor ID "
             << sensorId << ".\n";
             
             return;
