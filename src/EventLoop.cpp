@@ -5,16 +5,18 @@ using namespace std;
 
 //event producer
 Event produceEvent() {
-    static int nextSensorId = 1;
+    static int nextSensorId = 0;
+
+    int sensorId = (nextSensorId % 5) + 1;
     
     EventType type;
     int value;
 
     //rotates between event types
-    if (nextSensorId % 3 == 1) {
+    if (nextSensorId % 3 == 0) {
         type = TEMP;
-        value = 20 + nextSensorId;
-    } else if (nextSensorId % 3 == 2) {
+        value = 20 + sensorId + nextSensorId;
+    } else if (nextSensorId % 3 == 1) {
         type = BUTTON;
         value = 1;
     } else {
@@ -22,16 +24,16 @@ Event produceEvent() {
         value = 100;
     }
 
-    Event e = createEvent(nextSensorId, type, value);
+    Event e = createEvent(sensorId, type, value);
 
     nextSensorId++;
 
     return e;
 }
 
-void eventLoop_tick(Queue* queue, EventLog* log, AlarmSet* alarms) {
+void eventLoop_tick(Queue* queue, EventLog* log, AlarmSet* alarms, LatestEventStore* latestStore) {
     if (queue == nullptr || log == nullptr) {
-        cout << "Event loop error: queue or log is null.\n";
+        cout << "Event loop error: queue, alarms, log, or latest store is null.\n";
         return;
     }
 
@@ -52,6 +54,7 @@ void eventLoop_tick(Queue* queue, EventLog* log, AlarmSet* alarms) {
     if (dequeued) {
         log_append(log, consumed);
         alarm_updateFromEvent(alarms, consumed);
+        latest_updateFromEvent(latestStore, consumed);
 
         cout << "Processed event: "
              << "Timestamp: " << consumed.timestamp
@@ -61,13 +64,13 @@ void eventLoop_tick(Queue* queue, EventLog* log, AlarmSet* alarms) {
              << '\n';
     }
 }
-    void eventLoop_runTicks(Queue* queue, EventLog* log, AlarmSet* alarms, int iterations) {
+    void eventLoop_runTicks(Queue* queue, EventLog* log, AlarmSet* alarms, LatestEventStore* latestStore, int iterations) {
         if (iterations <= 0) {
             cout << "Number of ticks must be greater than 0.\n";
             return;
         }
 
         for (int i =0; i < iterations; i++) {
-            eventLoop_tick(queue, log, alarms);
+            eventLoop_tick(queue, log, alarms, latestStore);
         }
     }

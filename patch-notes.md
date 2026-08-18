@@ -4,132 +4,116 @@
 
 ## Module C:
 
-### C-1.1 ADT interface & implementation
+### C-1.2 Update Eventloop to track latest events
 
-LatestEventStore.hpp
+EventLoop.hpp
 ```cpp
-#include "Event.hpp"
+#ifndef EVENT_LOOP_HPP
+#define EVENT_LOOP_HPP
+
+#include "EventLog.hpp"
+#include "EventQueue.hpp"
+#include "AlarmSet.hpp"
+#include "LatestEventStore.hpp"
+
+//creating a simulated event
+Event produceEvent();
 
 
-struct LatestEventStore;
+/* runs all these events: 
+1 produce event
+2. enqueue event
+3. dequeue event
+4. append event to log
+5. update alarms
+*/
+void eventLoop_tick(Queue* queue, EventLog* log, AlarmSet* alarms, LatestEventStore* latestStore);
 
+//runs multple event loop 
+void eventLoop_runTicks(Queue* queue, EventLog* log, AlarmSet* alarms, LatestEventStore* latestStore, int iterations);
 
-//creating store that supportts sensor Ids from 0 to maxSensorId
-LatestEventStore* latest_create(int maxSensorId);
-
-//frees memory
-void latest_destroy(LatestEventStore* store);
-
-//updates the latest event for the event's sensor Id
-bool latest_updateFromEvent(LatestEventStore* store, const Event& e);
-
-//get latest event for a sensor & returns false if no event exists or invalid sensorId
-bool latest_get(const LatestEventStore* store, int sensorId, Event* out);
-
-//prints latest event for a sensor
-void latest_print(const LatestEventStore* store, int sensorId);
-
-#endif 
+#endif
 
 ```
 
-LatestEventStore.cpp
+EventLoop.cpp
 ```cpp
-//struct for storing latest events each sensor
-struct LatestEventStore {
-    Event* latestEvents;
-    bool* hasEvent;
-    int maxSensorId;
-};
+#include "EventLoop.hpp"
+#include <iostream>
 
-//function to create a new latest event store
-LatestEventStore* latest_create(int maxSensorId) {
-    if (maxSensorId < 0) {
-        maxSensorId = 0;
-    }
+using namespace std;
 
-    LatestEventStore* store = new LatestEventStore;
+//event producer
+Event produceEvent() {
+    static int nextSensorId = 0;
 
-    store->latestEvents = new Event[maxSensorId + 1];
-    store->hasEvent = new bool[maxSensorId + 1];
-    store->maxSensorId = maxSensorId;
-
-    for (int i = 0; i <= maxSensorId; i++) {
-        store->hasEvent[i] = false;
-    }
-
-    return store;
-}
-
-//destroy a latest event store
-void latest_destroy(LatestEventStore* store) {
-    if (store == nullptr) {
-        return;
-    }        
-
-        delete[] store->latestEvents;
-        delete[] store->hasEvent;
-        delete store;
-    }
+    int sensorId = (nextSensorId % 5) + 1;
     
-//update the latest event for a sensor
-bool latest_updateFromEvent(LatestEventStore* store, const Event& e) {
-    if (store == nullptr) {
-        return false;
+    EventType type;
+    int value;
+
+    //rotates between event types
+    if (nextSensorId % 3 == 0) {
+        type = TEMP;
+        value = 20 + sensorId + nextSensorId;
+    } else if (nextSensorId % 3 == 1) {
+        type = BUTTON;
+        value = 1;
+    } else {
+        type = MOTION;
+        value = 100;
     }
 
-    if (e.sensorId < 0 || e.sensorId > store->maxSensorId) {
-        cout << "LatestEventStore: sensor ID"
-        << e.sensorId 
-        << " is outside supported range.\n";
+    Event e = createEvent(sensorId, type, value);
 
-        return false;
-    }
+    nextSensorId++;
 
-    store->latestEvents[e.sensorId] = e;
-    store->hasEvent[e.sensorId] = true;
-    return true;
-
+    return e;
 }
 
-//get the latest event for a sensor
-bool latest_get(const LatestEventStore* store, int sensorId, Event* out) {
-    if (store == nullptr || out == nullptr) {
-        return false;
+void eventLoop_tick(Queue* queue, EventLog* log, AlarmSet* alarms, LatestEventStore* latestStore) {
+    if (queue == nullptr || log == nullptr) {
+        cout << "Event loop error: queue, alarms, log, or latest store is null.\n";
+        return;
     }
 
-    if (sensorId < 0 || sensorId > store->maxSensorId) {
-        return false;
+    //tick flow
+    Event produced = produceEvent();
+     
+    bool enqueued = queue_enqueue(queue, produced);
+
+    if (!enqueued) {
+        cout << "Queue is full. Event was dropped.\n";
+        return;
     }
 
-    if(!store->hasEvent[sensorId]) {
-        return false;
-    }
+    Event consumed;
 
-    *out = store->latestEvents[sensorId];
-    return true;
+    bool dequeued = queue_dequeue(queue, &consumed);
+
+    if (dequeued) {
+        log_append(log, consumed);
+        alarm_updateFromEvent(alarms, consumed);
+        latest_updateFromEvent(latestStore, consumed);
+
+        cout << "Processed event: "
+             << "Timestamp: " << consumed.timestamp
+             << ", Sensor ID: " << consumed.sensorId
+             << ", Type: " << eventTypeToString(consumed.type)
+             << ", Value: " << consumed.value
+             << '\n';
+    }
 }
-
-//print the latest event for a sensor
-void latest_print(const LatestEventStore* store, int sensorId) {
-    Event e;
-
-    if(!latest_get(store, sensorId, &e)) {
-        cout << "No latestt event found for sensor ID "
-            << sensorId << ".\n";
-            
+    void eventLoop_runTicks(Queue* queue, EventLog* log, AlarmSet* alarms, LatestEventStore* latestStore, int iterations) {
+        if (iterations <= 0) {
+            cout << "Number of ticks must be greater than 0.\n";
             return;
+        }
+
+        for (int i =0; i < iterations; i++) {
+            eventLoop_tick(queue, log, alarms, latestStore);
+        }
     }
-
-    cout << "Latest event for sensor ID " << sensorId << ":\n";
-    cout << "Timestamp: " << e.timestamp
-         << ", Sensor ID: " << e.sensorId
-         << ", Type: " << eventTypeToString(e.type)
-         << ", Value: " << e.value
-         << '\n';
-}
-
-
 ```
 
 ## Module A: AlarmSet
