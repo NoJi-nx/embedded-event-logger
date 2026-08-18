@@ -1,5 +1,5 @@
 #ifndef LATEST_EVENT_STORE_HPP
-#define LATEST_EVEBT_STORE_HPP
+#define LATEST_EVENT_STORE_HPP
 
 #include "Event.hpp"
 
