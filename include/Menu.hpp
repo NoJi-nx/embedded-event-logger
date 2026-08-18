@@ -4,9 +4,9 @@
 #include "EventLog.hpp"
 #include "EventQueue.hpp"
 #include "AlarmSet.hpp"
+#include "LatestEventStore.hpp"
 
 //starting the terminal command menu
-void runCommandMenu(Queue* queue, EventLog* log, AlarmSet* alarms);
-
+void runCommandMenu(Queue* queue, EventLog* log, AlarmSet* alarms, LatestEventStore* latestStore);
 
 #endif

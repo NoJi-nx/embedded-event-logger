@@ -4,6 +4,7 @@
 #include "Sort.hpp"
 #include "Search.hpp"
 #include "SortStrategy.hpp"
+#include "LatestEventStore.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -48,14 +49,15 @@ static void printHelp() {
     cout << " alarms                 Show active temperature alarms.\n";
     cout << " set-threshold <value>  Set temperature alarm threshold.\n";
     cout << " help                   Show help message.\n";
+    cout << " last <id>              Show the last event for a specific sensor.\n";
     cout << " exit                   Exit the program.\n\n";
 }
 
 
 
 //run the command menu
-void runCommandMenu(Queue* queue, EventLog* log, AlarmSet* alarms) {
-    if (queue == nullptr || log == nullptr || alarms == nullptr) {
+void runCommandMenu(Queue* queue, EventLog* log, AlarmSet* alarms, LatestEventStore* latestStore) {
+    if (queue == nullptr || log == nullptr || alarms == nullptr || latestStore == nullptr) {
         cout << "Command menu error: queue, log or alarms is null.\n";
         return;
     }
@@ -79,10 +81,10 @@ void runCommandMenu(Queue* queue, EventLog* log, AlarmSet* alarms) {
             int iterations = 1;
 
             if (ss >> iterations) {
-                eventLoop_runTicks(queue, log, alarms, iterations);
+                eventLoop_runTicks(queue, log, alarms, latestStore, iterations);
 
             } else {
-                eventLoop_runTicks(queue, log, alarms, 1);
+                eventLoop_runTicks(queue, log, alarms, latestStore, 1);
             }
         }
 
@@ -144,6 +146,16 @@ void runCommandMenu(Queue* queue, EventLog* log, AlarmSet* alarms) {
 
         else if (command == "help") {
             printHelp();
+        }
+
+        else if (command == "last") {
+            int sensorId;
+
+            if (ss >> sensorId) {
+                latest_print(latestStore, sensorId);
+            } else {
+                cout << "Usage: last <sensorId>\n";
+            }
         }
 
         else if (command == "exit") {
