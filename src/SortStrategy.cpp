@@ -9,6 +9,11 @@ SortFn getSortStrategy(const string& strategyName) {
     if (strategyName == "insertion" || strategyName.empty()) {
         return insertionSortByTimestamp;
     }
+
+    if(strategyName == "selection") {
+        return selectionSortByTimestamp;
+    }
+
     return nullptr;
 }
 

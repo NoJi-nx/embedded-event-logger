@@ -32,6 +32,46 @@ for (int i = 1; i < size; i++) {
 
 }
 
+//function to sort events by timestamp using selection sort
+void selectionSortByTimestamp(EventLog* log) {
+    if (log == nullptr) {
+        return;
+    }
+
+    int size = log_size(log);
+
+    if (size <= 1) {
+        return;
+    }
+
+    for (int i = 0; i < size - 1; i++) {
+        int minIndex = i;
+        
+        for (int j = i + 1; j < size; j++) {
+            int minIndex = i;
+
+            for (int j = i + 1; j < size; j++) {
+                Event currentMin = log_get(log, minIndex);
+                Event candidate = log_get(log, j);
+
+                if (candidate.timestamp < currentMin.timestamp) {
+                    minIndex = j;
+                }
+            }
+
+            if (minIndex != i) {
+                Event temp = log_get(log, i);
+                Event minEvent = log_get(log, minIndex);
+
+                log_set(log, i, minEvent);
+                log_set(log, minIndex, temp);
+            }
+
+        }
+}
+
+}
+
 //bool that checks if the events in the log are sorted by timestamp
 bool isSortedByTimestamp(const EventLog* log){
     if (log == nullptr) {

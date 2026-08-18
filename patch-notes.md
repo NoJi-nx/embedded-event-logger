@@ -2,7 +2,132 @@
 
 ## Part 2
 
-## Module C:
+## Module B: Second sort algorithm 
+
+### B-1.1 Add selection sort for Eventlog
+
+Sort.hpp
+```cpp
+#ifndef SORT_HPP
+#define SORT_HPP
+
+#include "EventLog.hpp"
+
+//sorting the log by timestamp using insertion
+void insertionSortByTimestamp(EventLog* log);
+
+//sorting the log by timestamp using selection
+void selectionSortByTimestamp(EventLog* log);
+
+//check if log is sorted by timestamp
+bool isSortedByTimestamp(const EventLog* log);
+
+#endif
+```
+
+
+Sort.cpp
+```cpp
+#include "Sort.hpp"
+#include <iostream>
+
+using namespace std;
+
+//function to sort events by timestamp using insertion sort
+void insertionSortByTimestamp(EventLog* log) {
+    if (log == nullptr) {
+        return;
+    }
+
+
+int size = log_size(log);
+
+if (size <= 1) {
+    return;
+}
+
+for (int i = 1; i < size; i++) {
+    Event key = log_get(log, i);
+    int j = i -1;
+
+    while (j >= 0 && log_get(log, j).timestamp > key.timestamp) {
+        Event previous = log_get(log, j);
+        log_set(log, j + 1, previous);
+        j--;
+
+    }
+
+    log_set(log, j + 1, key);
+}
+
+}
+
+//function to sort events by timestamp using selection sort
+void selectionSortByTimestamp(EventLog* log) {
+    if (log == nullptr) {
+        return;
+    }
+
+    int size = log_size(log);
+
+    if (size <= 1) {
+        return;
+    }
+
+    for (int i = 0; i < size - 1; i++) {
+        int minIndex = i;
+        
+        for (int j = i + 1; j < size; j++) {
+            int minIndex = i;
+
+            for (int j = i + 1; j < size; j++) {
+                Event currentMin = log_get(log, minIndex);
+                Event candidate = log_get(log, j);
+
+                if (candidate.timestamp < currentMin.timestamp) {
+                    minIndex = j;
+                }
+            }
+
+            if (minIndex != i) {
+                Event temp = log_get(log, i);
+                Event minEvent = log_get(log, minIndex);
+
+                log_set(log, i, minEvent);
+                log_set(log, minIndex, temp);
+            }
+
+        }
+}
+
+}
+
+//bool that checks if the events in the log are sorted by timestamp
+bool isSortedByTimestamp(const EventLog* log){
+    if (log == nullptr) {
+        return true;
+    }
+
+    int size = log_size(log);
+
+    if (size <= 1){
+        return true;
+    }
+
+    for (int i = 0; i < size - 1; i++) {
+        Event current = log_get(log, i);
+        Event next = log_get(log, i + 1);
+
+        if (current.timestamp > next.timestamp) {
+            return false;
+        }
+    }
+
+    return true;
+}
+```
+
+## Module C: Fast lookup
 
 ### C-1.3 Add command for latest sensor event + update
 
