@@ -4,6 +4,50 @@
 
 ## Module B: Second sort algorithm 
 
+### B-1.3 Update sort command with selection strategy
+Menu.cpp
+```cpp
+      else if (command == "sort") {
+           string strategyName;
+
+           if (!(ss >> strategyName)) {
+            strategyName = "insertion";
+           }
+
+           bool success = sortLogWithStrategy(log, strategyName);
+
+           if (!success) {
+            cout << "Unknown sorting strategy: " << strategyName << '\n';
+            cout << "Available strategies: insertion, selection\n";
+            continue;
+           }
+
+           cout << "Log sorted by timestamp using " << strategyName << " sort.\n";
+
+           if (isSortedByTimestamp(log)) {
+            cout << "Sort check: log is sorted.\n";
+           } else {
+            cout << "Sort check: log is not sorted. \n";
+           }
+        }
+```
+
+```cpp
+static void printHelp() {
+    cout << "\nAvailable commands: \n";
+    cout << " tick [n]               Run n event loop ticks. Default is 1.\n";
+    cout << " print                  Print all events in the log.\n";
+    cout << " sort [strategy]        Sort log by timestamp. Default: insertion.\n";
+    cout << "                        Available: insertion, selection.\n";    
+    cout << " find <id>              Find events by sensor ID.\n";
+    cout << " alarms                 Show active temperature alarms.\n";
+    cout << " set-threshold <value>  Set temperature alarm threshold.\n";
+    cout << " help                   Show help message.\n";
+    cout << " last <id>              Show the last event for a specific sensor.\n";
+    cout << " exit                   Exit the program.\n\n";
+}
+```
+
 ### B-1.2 Implement selection sort strategy
 
 SortStrategy.cpp

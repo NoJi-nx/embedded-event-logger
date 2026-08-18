@@ -44,7 +44,7 @@ static void printHelp() {
     cout << " tick [n]               Run n event loop ticks. Default is 1.\n";
     cout << " print                  Print all events in the log.\n";
     cout << " sort [strategy]        Sort log by timestamp. Default: insertion.\n";
-    cout << "                        Available: insertion.\n";    
+    cout << "                        Available: insertion, selection.\n";    
     cout << " find <id>              Find events by sensor ID.\n";
     cout << " alarms                 Show active temperature alarms.\n";
     cout << " set-threshold <value>  Set temperature alarm threshold.\n";
@@ -103,7 +103,7 @@ void runCommandMenu(Queue* queue, EventLog* log, AlarmSet* alarms, LatestEventSt
 
            if (!success) {
             cout << "Unknown sorting strategy: " << strategyName << '\n';
-            cout << "Available strategies: insertion\n";
+            cout << "Available strategies: insertion, selection\n";
             continue;
            }
 
