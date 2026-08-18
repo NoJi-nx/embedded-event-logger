@@ -46,9 +46,6 @@ void selectionSortByTimestamp(EventLog* log) {
 
     for (int i = 0; i < size - 1; i++) {
         int minIndex = i;
-        
-        for (int j = i + 1; j < size; j++) {
-            int minIndex = i;
 
             for (int j = i + 1; j < size; j++) {
                 Event currentMin = log_get(log, minIndex);
@@ -70,7 +67,6 @@ void selectionSortByTimestamp(EventLog* log) {
         }
 }
 
-}
 
 //bool that checks if the events in the log are sorted by timestamp
 bool isSortedByTimestamp(const EventLog* log){
